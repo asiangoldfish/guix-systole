@@ -15,7 +15,7 @@
       platformer-game = (with pkgs; stdenv.mkDerivation {
           dontpatchshebangs = false;
           pname = "3d-slicer";
-          version = "0.0.1";
+          version = "5.8.0";
           src = fetchgit {
             url = "https://github.com/Slicer/Slicer";
             rev = "v5.8.0";
@@ -29,16 +29,25 @@
           };
 
           buildInputs = [
+            # Mandatory
             qt5.full
             xorg.libXt
-      git
+            git
             openssl
             perl
-coreutils
+            libffi
+            libGL
+
+            # Needs testing...
+            xorg.libXinerama
+
+            # Taken apart from superbuild
+            python314
           ];
 
           nativeBuildInputs = [
-            gcc
+            #gcc
+            ninja
             cmake
           ];
 
@@ -46,14 +55,16 @@ coreutils
             cd ..
             sed '1c\#!/usr/bin/bash' Utilities/SetupForDevelopment.sh > Utilities/SetupForDevelopment.sh
             mkdir Slicer-SuperBuild-Debug && cd Slicer-SuperBuild-Debug
-            cmake .. # -DCMAKE_BUILD_TYPE:STRING=Release ..
+            cmake -S .. \
+               -DSlicer_USE_SYSTEM_LibFFI=ON \
+               -DSlicer_USE_PYTHONQT=OFF
             make
           '';
           installPhase = ''
             mv Slicer-build/Slicer $out/bin
           '';
 
-    # Specify content hash of fixed derivation output
+          # Specify content hash of fixed derivation output
           outputHashAlgo = "sha256";
           outputHashMode = "recursive";
           outputHash = "";
@@ -65,11 +76,10 @@ coreutils
       };
       defaultPackage = platformer-game;
       devShell = pkgs.mkShell {
-  buildInputs = [
+        buildInputs = [
          platformer-game
         ];
       };
     }
   );
 }
-
