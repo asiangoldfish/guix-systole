@@ -32,14 +32,15 @@ This configuration ensures that `guix pull` will fetch both Guix and the Systole
 As this repository does not currently provide pre-built substitutes or binaries, users are encouraged to build packages from source. You can clone the Systole repository and compile the packages you need:
 
 ```bash
-cd src
+mkdir -p ~/src
+cd ~/src
 git clone https://github.com/SystoleOS/guix-systole.git
 ```
 
 After cloning, you may build packages using:
 
 ```bash
-guix build -L ~/src/systole <package-name>
+guix build -L ~/src/guix-systole <package-name>
 ```
 
 When you are satisfied with your changes to the packages, you can push them to the repository for others to access.
